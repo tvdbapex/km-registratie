@@ -879,7 +879,7 @@ function normalizeEntry(entry = {}) {
     km: Number(entry.km || 0),
     cat: entry.cat || 'werk',
     datum: entry.datum || today,
-    created_at: entry.created_at || null,
+    
   };
 }
 
@@ -909,9 +909,8 @@ async function initializeApp() {
 async function loadEntriesFromSupabase() {
   const { data, error } = await supabaseClient
     .from('ritten')
-    .select('id, van, naar, km, cat, datum, created_at')
-    .order('datum', { ascending: false })
-    .order('created_at', { ascending: false });
+    .select('id, van, naar, km, cat, datum')
+    .order('datum', { ascending: false });
 
   if (error) throw error;
 
