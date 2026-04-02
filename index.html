@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>KM Registratie</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=h51jJmvrpapMDgpx9zb7urb0eA7Yr_Ie-CYQfF9pKBN0_-bGo-Vrd3wgwBOxxW3v4b6reAwaOOpA2s4203gZsqcaZYeqKlerdr-jbnXCnmUpasgGGoO48F-iLM_YBEC2ojaPvlQnyYtg6yQSs1fn4L-G0HjljBvDU1wGr0V2bN_VbctgRjAiglYDPH7WaV6BR4sMGYIxYrPqL_S0WKTZmk1N8utCjb1gmM0wOeuVn8pbJ1CQBot1q-1GSiA7_RkpN7YP5XecpiK3bfVNpN2vtg" charset="UTF-8"></script><style>
+  :root {
+    --bg: #050505;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #292929;
+    --border2: #3a3a3a;
+    --text: #f3f1ed;
+    --muted: #9a948c;
+    --accent: #c9b08a;
+    --accent-dim: #b49b77;
+    --werk: #d6bf9d;
+    --prive: #b7b0a7;
+    --anders: #8f8579;
+    --danger: #d96b6b;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 0 120px;
+  }
+
+  /* Header */
+  .header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+  .header-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .header-date {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Setup banner */
+  .setup-banner {
+    margin: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+  }
+  .setup-banner h3 {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .setup-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .setup-row label {
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 90px;
+  }
+  .setup-row input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 7px 10px;
+    outline: none;
+  }
+  .setup-row input:focus { border-color: var(--accent); }
+  .setup-save {
+    width: 100%;
+    margin-top: 10px;
+    background: var(--accent);
+    color: #0f0f0f;
+    border: none;
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .setup-save:hover { background: var(--accent-dim); }
+  .setup-toggle {
+    background: none;
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .setup-toggle:hover { color: var(--text); border-color: var(--text); }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 16px 20px;
+  }
+  .stat {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+  }
+  .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .stat-value { font-size: 20px; font-weight: 500; font-family: 'DM Mono', monospace; color: var(--text); }
+  .stat-value span { font-size: 11px; color: var(--muted); margin-left: 2px; }
+
+  /* Form */
+  .form-section {
+    padding: 0 20px 16px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-card:hover { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(201,176,138,0.08); }
+  .form-field {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    gap: 12px;
+    position: relative;
+  }
+  .form-field:last-child { border-bottom: none; }
+  .field-icon {
+    font-size: 14px;
+    color: var(--muted);
+    width: 18px;
+    flex-shrink: 0;
+  }
+  .field-label {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    width: 60px;
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+  }
+  .form-field input,
+  .form-field select {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 14px 0;
+    outline: none;
+    width: 100%;
+  }
+  .form-field input::placeholder { color: var(--border2); }
+  .form-field select option { background: var(--surface2); color: var(--text); }
+
+  .swap-row {
+    display: flex;
+    justify-content: center;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(201,176,138,0.04);
+  }
+  .btn-swap {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+  }
+  .btn-swap:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .km-row {
+    display: flex;
+    gap: 0;
+  }
+  .km-row .form-field {
+    flex: 1;
+  }
+  .km-row .form-field:first-child {
+    border-right: 1px solid var(--border);
+    border-radius: 0;
+  }
+
+  /* Autocomplete suggestions */
+  .autocomplete-list {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: -16px; right: -16px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    z-index: 200;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .autocomplete-item {
+    padding: 11px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .autocomplete-item:last-child { border-bottom: none; }
+  .autocomplete-item:hover, .autocomplete-item.selected { background: var(--surface); }
+  .autocomplete-icon { font-size: 13px; color: var(--muted); margin-top: 1px; flex-shrink: 0; }
+  .autocomplete-main { font-size: 13px; font-weight: 500; color: var(--text); }
+  .autocomplete-secondary { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* Distance badge */
+  .dist-badge {
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    white-space: nowrap;
+    padding: 0 4px;
+  }
+  .dist-loading { color: var(--muted); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* Buttons */
+  .btn-primary {
+    width: 100%;
+    margin-top: 12px;
+    background: var(--accent);
+    color: #0f0f0f;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-primary:hover { background: var(--accent-dim); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { background: var(--border2); color: var(--muted); cursor: not-allowed; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    padding: 0 20px 16px;
+  }
+  .tab {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    font-size: 13px;
+    padding: 9px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .tab.active {
+    background: var(--accent);
+    color: #0f0f0f;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Entries */
+  .entries-section { padding: 0 20px; }
+  .export-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .btn-export {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 12px;
+    padding: 9px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+    transition: border-color 0.15s;
+  }
+  .btn-export:hover { border-color: var(--accent); color: var(--accent); }
+
+  .entry-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .entry-left { flex: 1; min-width: 0; }
+  .entry-route {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .entry-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+  }
+  .entry-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .cat-pill {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 99px;
+    letter-spacing: 0.04em;
+  }
+  .cat-werk { background: rgba(201,176,138,0.16); color: var(--werk); }
+  .cat-prive { background: rgba(183,176,167,0.14); color: var(--prive); }
+  .cat-anders { background: rgba(143,133,121,0.14); color: var(--anders); }
+  .entry-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .entry-km {
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+  }
+  .entry-km span { font-size: 11px; color: var(--muted); }
+  .btn-del {
+    background: none;
+    border: none;
+    color: var(--border2);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 2px;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+  .btn-del:hover { color: var(--danger); }
+
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Maand */
+  .maand-block { margin-bottom: 14px; }
+  .maand-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+  }
+  .maand-naam { font-size: 14px; font-weight: 500; font-family: 'DM Mono', monospace; color: var(--text); }
+  .maand-ritten { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .maand-km { font-size: 18px; font-weight: 500; font-family: 'DM Mono', monospace; color: var(--accent); }
+  .maand-pills { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 4px; }
+  .maand-pill {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 99px;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 1000;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 24px 20px 36px;
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  .modal-title {
+    font-size: 14px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .modal-route {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .modal-km {
+    font-size: 28px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+  .modal-km span { font-size: 14px; color: var(--muted); }
+  .modal-nav-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+  .nav-buttons { display: flex; gap: 8px; margin-bottom: 14px; }
+  .btn-nav {
+    flex: 1;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border2);
+    transition: all 0.15s;
+  }
+  .btn-google { background: rgba(201,176,138,0.12); color: var(--accent); border-color: rgba(201,176,138,0.3); }
+  .btn-google:hover { background: rgba(201,176,138,0.22); }
+  .btn-apple { background: rgba(255,255,255,0.06); color: var(--text); border-color: var(--border2); }
+  .btn-apple:hover { background: rgba(255,255,255,0.12); }
+  .btn-confirm {
+    width: 100%;
+    background: var(--accent);
+    color: #0f0f0f;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.15s;
+    margin-bottom: 8px;
+  }
+  .btn-confirm:hover { background: var(--accent-dim); }
+  .btn-cancel {
+    width: 100%;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-cancel:hover { color: var(--text); border-color: var(--border2); }
+
+  /* Instructions */
+  .instructions {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 0 20px 16px;
+    overflow: hidden;
+  }
+  .instr-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+    padding: 12px 16px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .instr-toggle:hover { color: var(--text); }
+  .instr-body { padding: 0 16px 14px; display: none; }
+  .instr-body.open { display: block; }
+  .instr-step {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .instr-num {
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    font-size: 11px;
+    width: 18px;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+  .instr-step a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-title">KM // LOG</div>
+    <div class="header-date" id="header-date"></div>
+  </div>
+
+  <!-- Setup -->
+  <div class="setup-banner" id="setup-section">
+    <h3>⚙ INSTELLING</h3>
+    <div class="setup-row">
+      <label>Google API key</label>
+      <input type="password" id="cfg-apikey" placeholder="AIza..." autocomplete="off" />
+    </div>
+    <div class="setup-row">
+      <label>Thuisadres</label>
+      <input type="text" id="cfg-home" placeholder="Jouw thuisadres" />
+    </div>
+    <div class="setup-row">
+      <label>Werkadres</label>
+      <input type="text" id="cfg-work" placeholder="Jouw werkadres" />
+    </div>
+    <button class="setup-save" onclick="saveConfig()">Opslaan</button>
+  </div>
+
+  <!-- API setup instructions -->
+  <div class="instructions">
+    <button class="instr-toggle" onclick="toggleInstr(this)">
+      <span>HOE KOM IK AAN EEN GOOGLE API KEY?</span>
+      <span id="instr-arrow">▼</span>
+    </button>
+    <div class="instr-body" id="instr-body">
+      <div class="instr-step"><span class="instr-num">01</span><span>Ga naar <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> en maak een nieuw project aan.</span></div>
+      <div class="instr-step"><span class="instr-num">02</span><span>Ga naar "APIs & Services" → "Library" en activeer: <b>Routes API</b> en <b>Google Calendar API</b>.</span></div>
+      <div class="instr-step"><span class="instr-num">03</span><span>Ga naar "APIs & Services" → "Credentials" → "+ Create Credentials" → "API key".</span></div>
+      <div class="instr-step"><span class="instr-num">04</span><span>Kopieer de sleutel en plak hem hierboven. Je krijgt 10.000 gratis calls per maand — ruim genoeg voor persoonlijk gebruik.</span></div>
+      <div class="instr-step"><span class="instr-num">05</span><span>Voor Google Agenda: klik op "OAuth consent screen", kies "External", voeg jezelf toe als testgebruiker. Maak daarna een OAuth 2.0 Client ID aan en vul die hieronder in als je agenda-integratie wilt.</span></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-label">TOTAAL</div><div class="stat-value" id="stat-total">0<span>km</span></div></div>
+    <div class="stat"><div class="stat-label">RITTEN</div><div class="stat-value" id="stat-ritten">0</div></div>
+    <div class="stat"><div class="stat-label">GEM.</div><div class="stat-value" id="stat-gem">0<span>km</span></div></div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-section">
+    <div class="section-label">Nieuwe rit</div>
+    <div class="form-card">
+      <div class="form-field" style="position:relative;">
+        <span class="field-icon">◎</span>
+        <span class="field-label">VAN</span>
+        <input type="text" id="f-van" placeholder="Vertrekpunt" autocomplete="off" list="recent-addresses" oninput="onPlacesInput('van')" onkeydown="onAcKey(event,'van')" />
+        <div id="van-autocomplete" class="autocomplete-list" style="display:none;"></div>
+      </div>
+      <div class="swap-row">
+        <button class="btn-swap" type="button" onclick="swapAddresses()">⇅ wissel van / naar</button>
+      </div>
+      <div class="form-field" style="position:relative;">
+        <span class="field-icon">◉</span>
+        <span class="field-label">NAAR</span>
+        <input type="text" id="f-naar" placeholder="Bestemming" autocomplete="off" list="recent-addresses" oninput="onPlacesInput('naar')" onkeydown="onAcKey(event,'naar')" />
+        <div id="naar-autocomplete" class="autocomplete-list" style="display:none;"></div>
+      </div>
+      <div class="preset-panel">
+        <div class="preset-row">
+          <span class="preset-title">VAN</span>
+          <div class="preset-buttons">
+            <button type="button" class="preset-btn" onclick="applyPreset('van','home')">Thuis</button>
+            <button type="button" class="preset-btn" onclick="applyPreset('van','work')">Werk</button>
+            <button type="button" class="preset-btn" onclick="applyPreset('van','client')">Klant</button>
+          </div>
+        </div>
+        <div class="preset-row">
+          <span class="preset-title">NAAR</span>
+          <div class="preset-buttons">
+            <button type="button" class="preset-btn" onclick="applyPreset('naar','home')">Thuis</button>
+            <button type="button" class="preset-btn" onclick="applyPreset('naar','work')">Werk</button>
+            <button type="button" class="preset-btn" onclick="applyPreset('naar','client')">Klant</button>
+          </div>
+        </div>
+      </div>
+      <div class="km-row">
+        <div class="form-field">
+          <span class="field-label">KM</span>
+          <input type="number" id="f-km" placeholder="auto" min="0" step="0.1" />
+          <span class="dist-badge" id="dist-badge"></span>
+        </div>
+        <div class="form-field">
+          <span class="field-label">CAT</span>
+          <select id="f-cat">
+            <option value="werk">Werk</option>
+            <option value="prive">Privé</option>
+            <option value="anders">Anders</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">DATUM</span>
+        <input type="date" id="f-datum" />
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-toevoegen" onclick="handleToevoegen()">Rit toevoegen</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('ritten', this)">Ritten</button>
+    <button class="tab" onclick="switchTab('maand', this)">Maandoverzicht</button>
+  </div>
+
+  <!-- Ritten tab -->
+  <div id="tab-ritten" class="entries-section">
+    <div class="export-row">
+      <button class="btn-export" onclick="exportCSV()">→ CSV</button>
+      <button class="btn-export" onclick="exportExcel()">→ Excel</button>
+    </div>
+    <div id="entries-list"></div>
+  </div>
+
+  <!-- Maand tab -->
+  <div id="tab-maand" class="entries-section" style="display:none;">
+    <div class="export-row">
+      <button class="btn-export" onclick="exportCSV()">→ CSV</button>
+      <button class="btn-export" onclick="exportExcel()">→ Excel</button>
+    </div>
+    <div id="maand-list"></div>
+  </div>
+</div>
+
+<datalist id="recent-addresses"></datalist>
+
+<!-- Navigation modal -->
+<div class="modal-overlay" id="nav-modal">
+  <div class="modal">
+    <div class="modal-title">RIT BEVESTIGEN</div>
+    <div class="modal-route" id="modal-route">— → —</div>
+    <div class="modal-km" id="modal-km">— <span>km</span></div>
+    <div class="modal-nav-label">OPEN NAVIGATIE</div>
+    <div class="nav-buttons">
+      <button class="btn-nav btn-google" onclick="openGoogleMaps()">Google Maps</button>
+      <button class="btn-nav btn-apple" onclick="openAppleMaps()">Apple Maps</button>
+    </div>
+    <button class="btn-confirm" onclick="confirmRit()">✓ Rit bevestigen & loggen</button>
+    <button class="btn-cancel" onclick="closeModal()">Annuleren</button>
+  </div>
+</div>
+
+<script>
+// ─── State ────────────────────────────────────────────────────────
+let entries = JSON.parse(localStorage.getItem('km_entries_v2') || '[]');
+let config = JSON.parse(localStorage.getItem('km_config') || '{}');
+let pendingRit = null;
+let distanceTimeout = null;
+let recentAddresses = JSON.parse(localStorage.getItem('km_recent_addresses') || '[]');
+
+// ─── Init ─────────────────────────────────────────────────────────
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('f-datum').value = today;
+document.getElementById('header-date').textContent = new Date().toLocaleDateString('nl-NL', { weekday:'short', day:'numeric', month:'short' });
+
+if (config.apiKey) document.getElementById('cfg-apikey').value = config.apiKey;
+if (config.homeAddress) document.getElementById('cfg-home').value = config.homeAddress;
+if (config.workAddress) document.getElementById('cfg-work').value = config.workAddress;
+
+const lastVan = localStorage.getItem('km_last_van') || '';
+const lastNaar = localStorage.getItem('km_last_naar') || '';
+
+if (lastVan) document.getElementById('f-van').value = lastVan;
+if (lastNaar) document.getElementById('f-naar').value = lastNaar;
+
+renderRecentAddresses();
+
+// Hide setup if configured
+if (config.apiKey && (config.homeAddress || config.workAddress)) {
+  document.getElementById('setup-section').style.display = 'none';
+}
+
+render();
+
+// ─── Config ───────────────────────────────────────────────────────
+function saveConfig() {
+  config.apiKey = document.getElementById('cfg-apikey').value.trim();
+  config.homeAddress = document.getElementById('cfg-home').value.trim();
+  config.workAddress = document.getElementById('cfg-work').value.trim();
+  localStorage.setItem('km_config', JSON.stringify(config));
+
+  if (config.homeAddress) rememberAddress(config.homeAddress);
+  if (config.workAddress) rememberAddress(config.workAddress);
+
+  if (config.apiKey || config.homeAddress || config.workAddress) {
+    document.getElementById('setup-section').style.display = 'none';
+  }
+
+  alert('Instellingen opgeslagen!');
+}
+
+function toggleInstr(btn) {
+  const body = document.getElementById('instr-body');
+  const arrow = document.getElementById('instr-arrow');
+  body.classList.toggle('open');
+  arrow.textContent = body.classList.contains('open') ? '▲' : '▼';
+}
+
+function renderRecentAddresses() {
+  const list = document.getElementById('recent-addresses');
+  if (!list) return;
+  list.innerHTML = recentAddresses.map(address => `<option value="${escapeHtml(address)}"></option>`).join('');
+}
+
+function rememberAddress(address) {
+  const value = String(address || '').trim();
+  if (!value) return;
+  recentAddresses = [value, ...recentAddresses.filter(item => item.toLowerCase() !== value.toLowerCase())].slice(0, 8);
+  localStorage.setItem('km_recent_addresses', JSON.stringify(recentAddresses));
+  renderRecentAddresses();
+}
+
+function rememberLastAddresses(van, naar) {
+  localStorage.setItem('km_last_van', van || '');
+  localStorage.setItem('km_last_naar', naar || '');
+  rememberAddress(van);
+  rememberAddress(naar);
+}
+
+function normalizeAddress(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function getLastClientAddress(exclude = []) {
+  const blocked = new Set([
+    normalizeAddress(config.homeAddress),
+    normalizeAddress(config.workAddress),
+    ...exclude.map(normalizeAddress)
+  ].filter(Boolean));
+
+  return recentAddresses.find(address => !blocked.has(normalizeAddress(address))) || '';
+}
+
+function applyPreset(field, preset) {
+  const input = document.getElementById(`f-${field}`);
+  const otherField = field === 'van' ? 'naar' : 'van';
+  const otherValue = document.getElementById(`f-${otherField}`).value.trim();
+
+  let value = '';
+  if (preset === 'home') value = config.homeAddress || '';
+  if (preset === 'work') value = config.workAddress || '';
+  if (preset === 'client') value = getLastClientAddress([otherValue, input.value]);
+
+  if (!value) {
+    const labels = { home: 'thuisadres', work: 'werkadres', client: 'laatste klantadres' };
+    alert(`Geen ${labels[preset]} gevonden.`);
+    return;
+  }
+
+  input.value = value;
+  rememberLastAddresses(
+    document.getElementById('f-van').value.trim(),
+    document.getElementById('f-naar').value.trim()
+  );
+  triggerDistanceCalc();
+}
+
+function swapAddresses() {
+  const vanInput = document.getElementById('f-van');
+  const naarInput = document.getElementById('f-naar');
+  const temp = vanInput.value;
+  vanInput.value = naarInput.value;
+  naarInput.value = temp;
+  rememberLastAddresses(vanInput.value.trim(), naarInput.value.trim());
+  triggerDistanceCalc();
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ─── Places Autocomplete ──────────────────────────────────────────
+let acSessions = { van: null, naar: null };
+let acSelected = { van: -1, naar: -1 };
+let acResults = { van: [], naar: [] };
+let acTimers = { van: null, naar: null };
+
+function onPlacesInput(field) {
+  const val = document.getElementById(`f-${field}`).value.trim();
+  clearTimeout(acTimers[field]);
+  if (val.length < 2) { closeAc(field); return; }
+  acTimers[field] = setTimeout(() => fetchPlaces(field, val), 350);
+  triggerDistanceCalc();
+}
+
+async function fetchPlaces(field, input) {
+  if (!config.apiKey) return;
+  try {
+    const res = await fetch(`https://places.googleapis.com/v1/places:autocomplete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': config.apiKey,
+      },
+      body: JSON.stringify({
+        input,
+        languageCode: 'nl',
+        regionCode: 'NL'
+      })
+    });
+    const data = await res.json();
+    const suggestions = data.suggestions || [];
+    acResults[field] = suggestions.map(s => ({
+      main: s.placePrediction?.structuredFormat?.mainText?.text || s.placePrediction?.text?.text || '',
+      secondary: s.placePrediction?.structuredFormat?.secondaryText?.text || '',
+      full: s.placePrediction?.text?.text || ''
+    })).filter(s => s.full);
+    acSelected[field] = -1;
+    renderAc(field);
+  } catch(e) { closeAc(field); }
+}
+
+function renderAc(field) {
+  const container = document.getElementById(`${field}-autocomplete`);
+  if (!acResults[field].length) { container.style.display = 'none'; return; }
+  container.innerHTML = acResults[field].map((s, i) => `
+    <div class="autocomplete-item${acSelected[field]===i?' selected':''}" onmousedown="selectAc('${field}',${i})">
+      <div class="autocomplete-icon">◉</div>
+      <div>
+        <div class="autocomplete-main">${s.main}</div>
+        <div class="autocomplete-secondary">${s.secondary}</div>
+      </div>
+    </div>
+  `).join('');
+  container.style.display = 'block';
+}
+
+function selectAc(field, idx) {
+  const s = acResults[field][idx];
+  if (!s) return;
+  document.getElementById(`f-${field}`).value = s.full;
+  closeAc(field);
+  triggerDistanceCalc();
+}
+
+function closeAc(field) {
+  document.getElementById(`${field}-autocomplete`).style.display = 'none';
+  acResults[field] = [];
+}
+
+function onAcKey(e, field) {
+  const results = acResults[field];
+  if (!results.length) return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    acSelected[field] = Math.min(acSelected[field]+1, results.length-1);
+    renderAc(field);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    acSelected[field] = Math.max(acSelected[field]-1, -1);
+    renderAc(field);
+  } else if (e.key === 'Enter' && acSelected[field] >= 0) {
+    e.preventDefault();
+    selectAc(field, acSelected[field]);
+  } else if (e.key === 'Escape') {
+    closeAc(field);
+  }
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.form-field')) {
+    closeAc('van'); closeAc('naar');
+  }
+});
+
+// ─── Distance calculation ─────────────────────────────────────────
+function triggerDistanceCalc() {
+  clearTimeout(distanceTimeout);
+  distanceTimeout = setTimeout(calcDistance, 800);
+}
+
+async function calcDistance() {
+  const van = document.getElementById('f-van').value.trim();
+  const naar = document.getElementById('f-naar').value.trim();
+  const badge = document.getElementById('dist-badge');
+  const kmInput = document.getElementById('f-km');
+
+  if (!van || !naar || !config.apiKey) return;
+
+  badge.className = 'dist-badge dist-loading';
+  badge.textContent = '...';
+
+  try {
+    // Using Routes API (newer, replaces Distance Matrix)
+    const res = await fetch(`https://routes.googleapis.com/directions/v2:computeRoutes`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': config.apiKey,
+        'X-Goog-FieldMask': 'routes.distanceMeters'
+      },
+      body: JSON.stringify({
+        origin: { address: van },
+        destination: { address: naar },
+        travelMode: 'DRIVE'
+      })
+    });
+    const data = await res.json();
+    if (data.routes && data.routes[0]) {
+      const km = (data.routes[0].distanceMeters / 1000).toFixed(1);
+      badge.className = 'dist-badge';
+      badge.textContent = `${km} km`;
+      kmInput.value = km;
+      kmInput.dataset.auto = km;
+    } else {
+      badge.className = 'dist-badge';
+      badge.textContent = '';
+    }
+  } catch(e) {
+    badge.className = 'dist-badge';
+    badge.textContent = '';
+  }
+}
+
+// ─── Add entry flow ────────────────────────────────────────────────
+function handleToevoegen() {
+  const van = document.getElementById('f-van').value.trim();
+  const naar = document.getElementById('f-naar').value.trim();
+  const km = parseFloat(document.getElementById('f-km').value);
+  const cat = document.getElementById('f-cat').value;
+  const datum = document.getElementById('f-datum').value;
+
+  if (!naar) { alert('Vul een bestemming in.'); return; }
+  if (!datum) { alert('Vul een datum in.'); return; }
+  if (!km || km <= 0) { alert('Vul een afstand in (of wacht op automatische berekening).'); return; }
+
+  rememberLastAddresses(van, naar);
+  pendingRit = { van, naar, km, cat, datum };
+
+  // Show modal
+  document.getElementById('modal-route').textContent = `${van || '—'} → ${naar}`;
+  document.getElementById('modal-km').innerHTML = `${km.toFixed(1)} <span>km</span>`;
+  document.getElementById('nav-modal').classList.add('open');
+}
+
+function openGoogleMaps() {
+  const { van, naar } = pendingRit;
+  const origin = encodeURIComponent(van || '');
+  const dest = encodeURIComponent(naar);
+  window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=driving`, '_blank');
+}
+
+function openAppleMaps() {
+  const { van, naar } = pendingRit;
+  const dest = encodeURIComponent(naar);
+  const origin = van ? `&saddr=${encodeURIComponent(van)}` : '';
+  window.open(`https://maps.apple.com/?daddr=${dest}${origin}&dirflg=d`, '_blank');
+}
+
+function confirmRit() {
+  if (!pendingRit) return;
+  entries.push(pendingRit);
+  save();
+  render();
+  closeModal();
+  resetForm();
+}
+
+function closeModal() {
+  document.getElementById('nav-modal').classList.remove('open');
+  pendingRit = null;
+}
+
+function resetForm() {
+  document.getElementById('f-van').value = localStorage.getItem('km_last_van') || '';
+  document.getElementById('f-naar').value = localStorage.getItem('km_last_naar') || '';
+  document.getElementById('f-km').value = '';
+  document.getElementById('f-datum').value = today;
+  document.getElementById('dist-badge').textContent = '';
+}
+
+// ─── Data ─────────────────────────────────────────────────────────
+function save() { localStorage.setItem('km_entries_v2', JSON.stringify(entries)); }
+
+function deleteEntry(idx) {
+  if (!confirm('Rit verwijderen?')) return;
+  entries.splice(idx, 1);
+  save(); render();
+}
+
+// ─── Render ───────────────────────────────────────────────────────
+function render() {
+  const total = entries.reduce((s, e) => s + e.km, 0);
+  const gem = entries.length ? total / entries.length : 0;
+  document.getElementById('stat-total').innerHTML = `${total.toFixed(1)}<span>km</span>`;
+  document.getElementById('stat-ritten').textContent = entries.length;
+  document.getElementById('stat-gem').innerHTML = `${gem.toFixed(1)}<span>km</span>`;
+  renderRitten();
+  renderMaand();
+}
+
+function renderRitten() {
+  const list = document.getElementById('entries-list');
+  if (!entries.length) { list.innerHTML = '<div class="empty">// geen ritten geregistreerd</div>'; return; }
+  const sorted = [...entries].map((e,i) => ({...e, _i:i})).sort((a,b) => b.datum.localeCompare(a.datum));
+  list.innerHTML = sorted.map(e => {
+    const d = new Date(e.datum + 'T12:00:00');
+    const dateStr = d.toLocaleDateString('nl-NL', { day:'2-digit', month:'short' });
+    const catLabel = e.cat === 'werk' ? 'WERK' : e.cat === 'prive' ? 'PRIVÉ' : 'ANDERS';
+    return `<div class="entry-card">
+      <div class="entry-left">
+        <div class="entry-route">${e.van || '—'} → ${e.naar || '—'}</div>
+        <div class="entry-meta">
+          <span class="entry-date">${dateStr}</span>
+          <span class="cat-pill cat-${e.cat}">${catLabel}</span>
+        </div>
+      </div>
+      <div class="entry-right">
+        <div class="entry-km">${e.km.toFixed(1)}<span>km</span></div>
+        <button class="btn-del" onclick="deleteEntry(${e._i})">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderMaand() {
+  const list = document.getElementById('maand-list');
+  if (!entries.length) { list.innerHTML = '<div class="empty">// geen data</div>'; return; }
+
+  const byMonth = {};
+  entries.forEach(e => {
+    const key = e.datum.slice(0,7);
+    if (!byMonth[key]) byMonth[key] = { werk:0, prive:0, anders:0, ritten:0 };
+    byMonth[key][e.cat] += e.km;
+    byMonth[key].ritten++;
+  });
+
+  const keys = Object.keys(byMonth).sort((a,b) => b.localeCompare(a));
+  list.innerHTML = keys.map(key => {
+    const m = byMonth[key];
+    const total = m.werk + m.prive + m.anders;
+    const [yr, mo] = key.split('-');
+    const monthName = new Date(yr, mo-1, 1).toLocaleDateString('nl-NL', { month:'long', year:'numeric' });
+    const pills = [
+      m.werk > 0 ? `<span class="maand-pill cat-werk">werk ${m.werk.toFixed(1)}km</span>` : '',
+      m.prive > 0 ? `<span class="maand-pill cat-prive">privé ${m.prive.toFixed(1)}km</span>` : '',
+      m.anders > 0 ? `<span class="maand-pill cat-anders">anders ${m.anders.toFixed(1)}km</span>` : '',
+    ].filter(Boolean).join('');
+    return `<div class="maand-block">
+      <div class="maand-header">
+        <div>
+          <div class="maand-naam">${monthName}</div>
+          <div class="maand-ritten">${m.ritten} rit${m.ritten!==1?'ten':''}</div>
+        </div>
+        <div class="maand-km">${total.toFixed(1)}<span style="font-size:12px;color:var(--muted);margin-left:3px;">km</span></div>
+      </div>
+      <div class="maand-pills">${pills}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── Tabs ─────────────────────────────────────────────────────────
+function switchTab(name, el) {
+  document.getElementById('tab-ritten').style.display = name === 'ritten' ? '' : 'none';
+  document.getElementById('tab-maand').style.display = name === 'maand' ? '' : 'none';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ─── Export ───────────────────────────────────────────────────────
+function exportCSV() {
+  if (!entries.length) { alert('Geen ritten om te exporteren.'); return; }
+  const rows = [['Datum','Van','Naar','Km','Categorie']];
+  [...entries].sort((a,b) => a.datum.localeCompare(b.datum)).forEach(e => {
+    rows.push([e.datum, e.van, e.naar, e.km.toFixed(1), e.cat]);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type:'text/csv;charset=utf-8;' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'km-registratie.csv'; a.click();
+}
+
+function exportExcel() {
+  if (!entries.length) { alert('Geen ritten om te exporteren.'); return; }
+  const sorted = [...entries].sort((a,b) => a.datum.localeCompare(b.datum));
+  const byMonth = {};
+  sorted.forEach(e => {
+    const key = e.datum.slice(0,7);
+    if (!byMonth[key]) byMonth[key] = { werk:0, prive:0, anders:0, ritten:0 };
+    byMonth[key][e.cat] += e.km; byMonth[key].ritten++;
+  });
+
+  const ritRows = sorted.map(e =>
+    `<Row><Cell><Data ss:Type="String">${e.datum}</Data></Cell><Cell><Data ss:Type="String">${e.van||''}</Data></Cell><Cell><Data ss:Type="String">${e.naar||''}</Data></Cell><Cell><Data ss:Type="Number">${e.km.toFixed(1)}</Data></Cell><Cell><Data ss:Type="String">${e.cat}</Data></Cell></Row>`
+  ).join('');
+
+  const maandRows = Object.keys(byMonth).sort().map(key => {
+    const m = byMonth[key];
+    const t = (m.werk+m.prive+m.anders).toFixed(1);
+    return `<Row><Cell><Data ss:Type="String">${key}</Data></Cell><Cell><Data ss:Type="Number">${m.ritten}</Data></Cell><Cell><Data ss:Type="Number">${m.werk.toFixed(1)}</Data></Cell><Cell><Data ss:Type="Number">${m.prive.toFixed(1)}</Data></Cell><Cell><Data ss:Type="Number">${m.anders.toFixed(1)}</Data></Cell><Cell><Data ss:Type="Number">${t}</Data></Cell></Row>`;
+  }).join('');
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Ritten"><Table><Row><Cell><Data ss:Type="String">Datum</Data></Cell><Cell><Data ss:Type="String">Van</Data></Cell><Cell><Data ss:Type="String">Naar</Data></Cell><Cell><Data ss:Type="String">Km</Data></Cell><Cell><Data ss:Type="String">Categorie</Data></Cell></Row>${ritRows}</Table></Worksheet><Worksheet ss:Name="Maandoverzicht"><Table><Row><Cell><Data ss:Type="String">Maand</Data></Cell><Cell><Data ss:Type="String">Ritten</Data></Cell><Cell><Data ss:Type="String">Werk km</Data></Cell><Cell><Data ss:Type="String">Privé km</Data></Cell><Cell><Data ss:Type="String">Anders km</Data></Cell><Cell><Data ss:Type="String">Totaal km</Data></Cell></Row>${maandRows}</Table></Worksheet></Workbook>`;
+
+  const blob = new Blob([xml], { type:'application/vnd.ms-excel;charset=utf-8;' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'km-registratie.xls'; a.click();
+}
+</script>
+</body>
+</html>
