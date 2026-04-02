@@ -7,7 +7,7 @@
 <link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-<style>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=dEt0GNHsdQYp7dhkMf8kEo5LGPJECzZFtzHyubAwbiyvmdKSCd3ywEXXag-2eGHvH2oLrcm5e4W2bucILNnwbIt0M3P1vh8gkZIOIv5nx7TXXpxesoU0TunKr4VPmEKkRPZ0w8er52YNWnarFGi_Tf8BiRFzFbNJ48UJjqkwgT2a006Lfu_rte8A97-Km203c2k8bs-TU7Dyg2qYjrGS8wCXNaC6zJsooRPvA6lVcNvaJCrXVB_TEB5eq5BTegqT-GFnL1WDcXeZls733kGiXQ" charset="UTF-8"></script><style>
   :root {
     --bg: #050505;
     --surface: #111111;
@@ -788,13 +788,13 @@
     <div class="modal-title">RIT BEVESTIGEN</div>
     <div class="modal-route" id="modal-route">— → —</div>
     <div class="modal-km" id="modal-km">— <span>km</span></div>
-    <div class="modal-nav-label">OPEN NAVIGATIE</div>
+    <button class="btn-confirm" id="btn-confirm-rit" onclick="confirmRit()">✓ Rit bevestigen & loggen</button>
+    <div class="modal-nav-label">OPEN NAVIGATIE (OPTIONEEL)</div>
     <div class="nav-buttons">
       <button class="btn-nav btn-google" onclick="openGoogleMaps()">Google Maps</button>
       <button class="btn-nav btn-apple" onclick="openAppleMaps()">Apple Maps</button>
     </div>
-    <button class="btn-confirm" onclick="confirmRit()">✓ Rit bevestigen & loggen</button>
-    <button class="btn-cancel" onclick="closeModal()">Annuleren</button>
+    <button class="btn-cancel" onclick="closeModal()">Sluiten</button>
   </div>
 </div>
 
@@ -1280,11 +1280,19 @@ function openAppleMaps() {
 
 async function confirmRit() {
   if (!pendingRit) return;
+
+  const btn = document.getElementById('btn-confirm-rit');
+  if (btn?.disabled) return;
+
   try {
     await saveEntry(pendingRit);
     render();
-    closeModal();
     resetForm();
+
+    if (btn) {
+      btn.textContent = '✓ Opgeslagen';
+      btn.disabled = true;
+    }
   } catch (error) {
     console.error(error);
     alert('Opslaan mislukt. Controleer je Supabase instellingen of internetverbinding.');
@@ -1293,6 +1301,11 @@ async function confirmRit() {
 
 function closeModal() {
   document.getElementById('nav-modal').classList.remove('open');
+  const btn = document.getElementById('btn-confirm-rit');
+  if (btn) {
+    btn.textContent = '✓ Rit bevestigen & loggen';
+    btn.disabled = false;
+  }
   pendingRit = null;
 }
 
