@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>KM Registratie</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=h51jJmvrpapMDgpx9zb7urb0eA7Yr_Ie-CYQfF9pKBN0_-bGo-Vrd3wgwBOxxW3v4b6reAwaOOpA2s4203gZsqcaZYeqKlerdr-jbnXCnmUpasgGGoO48F-iLM_YBEC2ojaPvlQnyYtg6yQSs1fn4L-G0HjljBvDU1wGr0V2bN_VbctgRjAiglYDPH7WaV6BR4sMGYIxYrPqL_S0WKTZmk1N8utCjb1gmM0wOeuVn8pbJ1CQBot1q-1GSiA7_RkpN7YP5XecpiK3bfVNpN2vtg" charset="UTF-8"></script><style>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=4UxtJwkdqbusFsKqHIMmmib4pVs3aEyoHjXdhpqzil-82loX9LCDg7Sd03ZA6Si7mae8PvCbm3yDFoMXlOPWIclY-02N2x_zNY_2m1SyY2fIZKQIll4I1oF7b1k_uKRvqtvjBB3QA_6v7hXB5Nhf0A1PS0V0NPwUqTMau9Bm5LR8Om2oRWXhHk9_7eZuj1CGhP3spHUpXJ2t_G4SpHDky7QNZshX_E3eRpvn_d4ICbuoFc5_i-J4Rodtm8FsAfSrzwBNSEzNu0eChvv8G0hjPA" charset="UTF-8"></script><style>
   :root {
     --bg: #050505;
     --surface: #111111;
@@ -586,6 +586,7 @@
     <div class="setup-row">
       <label>Google API key</label>
       <input type="password" id="cfg-apikey" placeholder="AIza..." autocomplete="off" />
+      <div style="font-size:10px;color:var(--muted);margin-top:4px;">Laat leeg als je een vaste key in <code>DEFAULT_API_KEY</code> hebt gezet.</div>
     </div>
     <div class="setup-row">
       <label>Thuisadres</label>
@@ -729,6 +730,10 @@ let entries = JSON.parse(localStorage.getItem('km_entries_v2') || '[]');
 let config = JSON.parse(localStorage.getItem('km_config') || '{}');
 let pendingRit = null;
 let distanceTimeout = null;
+
+// Zet hier desgewenst je standaard browser-key neer.
+// Door de Google restricties op jouw domein en API's blijft dit werkbaar voor deze statische app.
+const DEFAULT_API_KEY = '';
 let recentAddresses = JSON.parse(localStorage.getItem('km_recent_addresses') || '[]');
 
 // ─── Init ─────────────────────────────────────────────────────────
@@ -736,7 +741,11 @@ const today = new Date().toISOString().split('T')[0];
 document.getElementById('f-datum').value = today;
 document.getElementById('header-date').textContent = new Date().toLocaleDateString('nl-NL', { weekday:'short', day:'numeric', month:'short' });
 
-if (config.apiKey) document.getElementById('cfg-apikey').value = config.apiKey;
+const activeApiKey = config.apiKey || DEFAULT_API_KEY;
+if (activeApiKey) {
+  config.apiKey = activeApiKey;
+  document.getElementById('cfg-apikey').value = activeApiKey;
+}
 if (config.homeAddress) document.getElementById('cfg-home').value = config.homeAddress;
 if (config.workAddress) document.getElementById('cfg-work').value = config.workAddress;
 
@@ -749,7 +758,7 @@ if (lastNaar) document.getElementById('f-naar').value = lastNaar;
 renderRecentAddresses();
 
 // Hide setup if configured
-if (config.apiKey && (config.homeAddress || config.workAddress)) {
+if (activeApiKey && (config.homeAddress || config.workAddress)) {
   document.getElementById('setup-section').style.display = 'none';
 }
 
@@ -757,7 +766,7 @@ render();
 
 // ─── Config ───────────────────────────────────────────────────────
 function saveConfig() {
-  config.apiKey = document.getElementById('cfg-apikey').value.trim();
+  config.apiKey = document.getElementById('cfg-apikey').value.trim() || DEFAULT_API_KEY;
   config.homeAddress = document.getElementById('cfg-home').value.trim();
   config.workAddress = document.getElementById('cfg-work').value.trim();
   localStorage.setItem('km_config', JSON.stringify(config));
