@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>KM Registratie</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=tVX9GaAFJcEZ3FHWImC3nVWECblrsOwAb9jOXL5QxQ1N8pWG2vj1LANcOXGnYhyKUSZq1xDG4zkoMTHyeWpi9ZEDijAa2wq4CUYnu3xjd2QVx317wnQhDOjLTY3_TNdJ3IZtm3dil1JhUc1KrzUFtEcCMzc45jVy9K9lhCk9pozDRDzl18pmdW58S0KsqOAg9oJkIT3j9UJCEMX-ISgZWaCOtCk0Mw7sPmPvDpfjYRM41dgOmlZpyOM0ujTslnXPO0fSGHoqxKwPSP8djZWlbA" charset="UTF-8"></script><style>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=Tk0712xtJ_XjRBcA4bpdYX0IN7fm57xlmMzhtHXsTBucQNmuctwZz95HL-9L4nI6f0nRRSrEZ_rFudQEOisAmwADFycWt6zbKKBaPfIbGblgQDOKP_QqQZHXLo1DsSOECUYUbYsrYcBI9UjrL4ORUsk33A0xKakvJZDlrnNlH9HI2pdE2VxMcDqHosBWhFOkCVOU-fXH3McVQXE2nrbUI2SBGT3QJH0K1-EnhIsCxLYbxrZCeJW24--n8Q3Z8l0C6jvJj5Q7EnMh8vytlUr4iw" charset="UTF-8"></script><style>
   :root {
     --bg: #050505;
     --surface: #111111;
@@ -672,7 +672,7 @@
       <div class="form-field" style="position:relative;">
         <span class="field-icon">◎</span>
         <span class="field-label">VAN</span>
-        <input type="text" id="f-van" placeholder="Vertrekpunt" autocomplete="off" list="recent-addresses" oninput="onPlacesInput('van')" onkeydown="onAcKey(event,'van')" />
+        <input type="text" id="f-van" placeholder="Vertrekpunt" autocomplete="off" list="recent-addresses" onfocus="onPlacesFocus('van')" oninput="onPlacesInput('van')" onkeydown="onAcKey(event,'van')" />
         <div id="van-autocomplete" class="autocomplete-list" style="display:none;"></div>
       </div>
       <div class="swap-row">
@@ -681,27 +681,10 @@
       <div class="form-field" style="position:relative;">
         <span class="field-icon">◉</span>
         <span class="field-label">NAAR</span>
-        <input type="text" id="f-naar" placeholder="Bestemming" autocomplete="off" list="recent-addresses" oninput="onPlacesInput('naar')" onkeydown="onAcKey(event,'naar')" />
+        <input type="text" id="f-naar" placeholder="Bestemming" autocomplete="off" list="recent-addresses" onfocus="onPlacesFocus('naar')" oninput="onPlacesInput('naar')" onkeydown="onAcKey(event,'naar')" />
         <div id="naar-autocomplete" class="autocomplete-list" style="display:none;"></div>
       </div>
-      <div class="preset-panel">
-        <div class="preset-row">
-          <span class="preset-title">VAN</span>
-          <div class="preset-buttons">
-            <button type="button" class="preset-btn" onclick="applyPreset('van','home')">Thuis</button>
-            <button type="button" class="preset-btn" onclick="applyPreset('van','work')">Werk</button>
-            <button type="button" class="preset-btn" onclick="applyPreset('van','client')">Klant</button>
-          </div>
-        </div>
-        <div class="preset-row">
-          <span class="preset-title">NAAR</span>
-          <div class="preset-buttons">
-            <button type="button" class="preset-btn" onclick="applyPreset('naar','home')">Thuis</button>
-            <button type="button" class="preset-btn" onclick="applyPreset('naar','work')">Werk</button>
-            <button type="button" class="preset-btn" onclick="applyPreset('naar','client')">Klant</button>
-          </div>
-        </div>
-      </div>
+
       <div class="km-row">
         <div class="form-field">
           <span class="field-label">KM</span>
@@ -768,10 +751,6 @@
       <div class="settings-field">
         <label for="settings-home">Thuisadres</label>
         <input type="text" id="settings-home" placeholder="Jouw thuisadres" />
-      </div>
-      <div class="settings-field">
-        <label for="settings-work">Werkadres</label>
-        <input type="text" id="settings-work" placeholder="Jouw werkadres" />
       </div>
     </div>
     <div class="settings-note">Je Google API key wordt nu vanuit de code geladen. Hier hoef je dus niets meer voor in te vullen.</div>
@@ -840,7 +819,6 @@ document.getElementById('nav-modal').addEventListener('click', (e) => {
 // ─── Config ───────────────────────────────────────────────────────
 function openSettingsModal() {
   document.getElementById('settings-home').value = config.homeAddress || '';
-  document.getElementById('settings-work').value = config.workAddress || '';
   document.getElementById('settings-modal').classList.add('open');
 }
 
@@ -851,13 +829,7 @@ function closeSettingsModal() {
 function saveAddressSettings() {
   config.apiKey = config.apiKey || DEFAULT_API_KEY;
   config.homeAddress = document.getElementById('settings-home').value.trim();
-  config.workAddress = document.getElementById('settings-work').value.trim();
   localStorage.setItem('km_config', JSON.stringify(config));
-
-  const vanInput = document.getElementById('f-van');
-  if (!vanInput.value.trim() && config.homeAddress) {
-    vanInput.value = config.homeAddress;
-  }
 
   closeSettingsModal();
   alert('Instellingen opgeslagen!');
@@ -888,39 +860,6 @@ function normalizeAddress(value) {
   return String(value || '').trim().toLowerCase();
 }
 
-function getLastClientAddress(exclude = []) {
-  const blocked = new Set([
-    normalizeAddress(config.homeAddress),
-    normalizeAddress(config.workAddress),
-    ...exclude.map(normalizeAddress)
-  ].filter(Boolean));
-
-  return recentAddresses.find(address => !blocked.has(normalizeAddress(address))) || '';
-}
-
-function applyPreset(field, preset) {
-  const input = document.getElementById(`f-${field}`);
-  const otherField = field === 'van' ? 'naar' : 'van';
-  const otherValue = document.getElementById(`f-${otherField}`).value.trim();
-
-  let value = '';
-  if (preset === 'home') value = config.homeAddress || '';
-  if (preset === 'work') value = config.workAddress || '';
-  if (preset === 'client') value = getLastClientAddress([otherValue, input.value]);
-
-  if (!value) {
-    const labels = { home: 'thuisadres', work: 'werkadres', client: 'laatste klantadres' };
-    alert(`Geen ${labels[preset]} gevonden.`);
-    return;
-  }
-
-  input.value = value;
-  rememberLastAddresses(
-    document.getElementById('f-van').value.trim(),
-    document.getElementById('f-naar').value.trim()
-  );
-  triggerDistanceCalc();
-}
 
 function swapAddresses() {
   const vanInput = document.getElementById('f-van');
@@ -940,6 +879,39 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;');
 }
 
+
+function getLocalSuggestions(query = '') {
+  const q = String(query || '').trim().toLowerCase();
+  const seen = new Set();
+  const suggestions = [];
+
+  const pushSuggestion = (full, main, secondary, isHome = false) => {
+    const value = String(full || '').trim();
+    if (!value) return;
+    const key = value.toLowerCase();
+    if (seen.has(key)) return;
+    if (q && !value.toLowerCase().includes(q)) return;
+    seen.add(key);
+    suggestions.push({ full: value, main, secondary, isHome });
+  };
+
+  if (config.homeAddress) {
+    pushSuggestion(config.homeAddress, 'Thuis', config.homeAddress, true);
+  }
+
+  recentAddresses.forEach(address => {
+    pushSuggestion(address, address, 'Recent adres');
+  });
+
+  return suggestions;
+}
+
+function onPlacesFocus(field) {
+  acSelected[field] = -1;
+  acResults[field] = getLocalSuggestions(document.getElementById(`f-${field}`).value);
+  renderAc(field);
+}
+
 // ─── Places Autocomplete ──────────────────────────────────────────
 let acSessions = { van: null, naar: null };
 let acSelected = { van: -1, naar: -1 };
@@ -949,7 +921,15 @@ let acTimers = { van: null, naar: null };
 function onPlacesInput(field) {
   const val = document.getElementById(`f-${field}`).value.trim();
   clearTimeout(acTimers[field]);
-  if (val.length < 2) { closeAc(field); return; }
+
+  if (val.length < 2) {
+    acSelected[field] = -1;
+    acResults[field] = getLocalSuggestions(val);
+    renderAc(field);
+    triggerDistanceCalc();
+    return;
+  }
+
   acTimers[field] = setTimeout(() => fetchPlaces(field, val), 350);
   triggerDistanceCalc();
 }
@@ -971,11 +951,20 @@ async function fetchPlaces(field, input) {
     });
     const data = await res.json();
     const suggestions = data.suggestions || [];
-    acResults[field] = suggestions.map(s => ({
+    const remoteSuggestions = suggestions.map(s => ({
       main: s.placePrediction?.structuredFormat?.mainText?.text || s.placePrediction?.text?.text || '',
       secondary: s.placePrediction?.structuredFormat?.secondaryText?.text || '',
       full: s.placePrediction?.text?.text || ''
     })).filter(s => s.full);
+
+    const combined = [...getLocalSuggestions(input)];
+    remoteSuggestions.forEach(item => {
+      if (!combined.some(existing => normalizeAddress(existing.full) === normalizeAddress(item.full))) {
+        combined.push(item);
+      }
+    });
+
+    acResults[field] = combined;
     acSelected[field] = -1;
     renderAc(field);
   } catch(e) { closeAc(field); }
@@ -983,13 +972,18 @@ async function fetchPlaces(field, input) {
 
 function renderAc(field) {
   const container = document.getElementById(`${field}-autocomplete`);
-  if (!acResults[field].length) { container.style.display = 'none'; return; }
-  container.innerHTML = acResults[field].map((s, i) => `
+  const items = acResults[field] || [];
+  if (!items.length) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.innerHTML = items.map((s, i) => `
     <div class="autocomplete-item${acSelected[field]===i?' selected':''}" onmousedown="selectAc('${field}',${i})">
-      <div class="autocomplete-icon">◉</div>
+      <div class="autocomplete-icon">${s.isHome ? '🏠' : '◉'}</div>
       <div>
-        <div class="autocomplete-main">${s.main}</div>
-        <div class="autocomplete-secondary">${s.secondary}</div>
+        <div class="autocomplete-main">${escapeHtml(s.main || s.full)}</div>
+        <div class="autocomplete-secondary">${escapeHtml(s.secondary || '')}</div>
       </div>
     </div>
   `).join('');
