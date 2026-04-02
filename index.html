@@ -4,23 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>KM Registratie</title>
+<link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    --bg: #0f0f0f;
-    --surface: #1a1a1a;
-    --surface2: #222222;
-    --border: #2e2e2e;
+    --bg: #050505;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #292929;
     --border2: #3a3a3a;
-    --text: #f0ede8;
-    --muted: #888;
-    --accent: #c8f060;
-    --accent-dim: #9db840;
-    --werk: #60b8f0;
-    --prive: #f0c060;
-    --anders: #c060f0;
-    --danger: #f06060;
+    --text: #f3f1ed;
+    --muted: #9a948c;
+    --accent: #c9b08a;
+    --accent-dim: #b49b77;
+    --werk: #d6bf9d;
+    --prive: #b7b0a7;
+    --anders: #8f8579;
+    --danger: #d96b6b;
     --radius: 12px;
     --radius-sm: 8px;
   }
@@ -29,7 +30,7 @@
 
   body {
     font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
+    background: linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
     color: var(--text);
     min-height: 100vh;
     font-size: 15px;
@@ -39,7 +40,7 @@
   .app {
     max-width: 480px;
     margin: 0 auto;
-    padding: 0 0 120px;
+    padding: 0 0 160px;
   }
 
   /* Header */
@@ -57,7 +58,7 @@
   .header-title {
     font-family: 'DM Mono', monospace;
     font-size: 14px;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     color: var(--accent);
     font-weight: 500;
   }
@@ -167,7 +168,9 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
+  .form-card:hover { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(201,176,138,0.08); }
   .form-field {
     display: flex;
     align-items: center;
@@ -205,6 +208,32 @@
   }
   .form-field input::placeholder { color: var(--border2); }
   .form-field select option { background: var(--surface2); color: var(--text); }
+
+  .swap-row {
+    display: flex;
+    justify-content: center;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(201,176,138,0.04);
+  }
+  .btn-swap {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+  }
+  .btn-swap:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+
   .km-row {
     display: flex;
     gap: 0;
@@ -352,9 +381,9 @@
     border-radius: 99px;
     letter-spacing: 0.04em;
   }
-  .cat-werk { background: rgba(96,184,240,0.15); color: var(--werk); }
-  .cat-prive { background: rgba(240,192,96,0.15); color: var(--prive); }
-  .cat-anders { background: rgba(192,96,240,0.15); color: var(--anders); }
+  .cat-werk { background: rgba(201,176,138,0.16); color: var(--werk); }
+  .cat-prive { background: rgba(183,176,167,0.14); color: var(--prive); }
+  .cat-anders { background: rgba(143,133,121,0.14); color: var(--anders); }
   .entry-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
   .entry-km {
     font-size: 16px;
@@ -467,8 +496,8 @@
     border: 1px solid var(--border2);
     transition: all 0.15s;
   }
-  .btn-google { background: rgba(66,133,244,0.12); color: #4285f4; border-color: rgba(66,133,244,0.3); }
-  .btn-google:hover { background: rgba(66,133,244,0.25); }
+  .btn-google { background: rgba(201,176,138,0.12); color: var(--accent); border-color: rgba(201,176,138,0.3); }
+  .btn-google:hover { background: rgba(201,176,138,0.22); }
   .btn-apple { background: rgba(255,255,255,0.06); color: var(--text); border-color: var(--border2); }
   .btn-apple:hover { background: rgba(255,255,255,0.12); }
   .btn-confirm {
@@ -542,7 +571,105 @@
     padding-top: 1px;
   }
   .instr-step a { color: var(--accent); }
+
+  /* Bottom actions */
+  .bottom-actions {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, rgba(11,11,11,0.98), rgba(11,11,11,0.92), rgba(11,11,11,0));
+    z-index: 20;
+  }
+  .bottom-actions-inner {
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .btn-settings {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+  .btn-settings:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Settings modal */
+  .settings-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 1100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .settings-modal-overlay.open { display: flex; }
+  .settings-modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 24px 20px 36px;
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.2s ease;
+  }
+  .settings-grid { display: grid; gap: 12px; margin-top: 16px; }
+  .settings-field label {
+    display:block;
+    font-size:11px;
+    font-family:'DM Mono', monospace;
+    color: var(--muted);
+    letter-spacing:0.06em;
+    margin-bottom:8px;
+    text-transform: uppercase;
+  }
+  .settings-field input {
+    width:100%;
+    background: var(--surface2);
+    border:1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    font-family:'DM Sans', sans-serif;
+    font-size:14px;
+    padding: 12px 14px;
+    outline:none;
+  }
+  .settings-field input:focus { border-color: var(--accent); }
+  .settings-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+
+  #sync-status {
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
 </style>
+<script type="module">
+  window.supabaseReady = import("https://esm.sh/@supabase/supabase-js@2")
+    .then(({ createClient }) => {
+      window.supabase = { createClient };
+      return true;
+    })
+    .catch((error) => {
+      console.error("Supabase module load failed:", error);
+      window.supabase = null;
+      return false;
+    });
+</script>
 </head>
 <body>
 <div class="app">
@@ -550,37 +677,9 @@
   <!-- Header -->
   <div class="header">
     <div class="header-title">KM // LOG</div>
-    <div class="header-date" id="header-date"></div>
+    <div style="display:flex; align-items:center; gap:8px;"><div class="header-date" id="header-date"></div><div class="header-date" id="sync-status">sync…</div></div>
   </div>
 
-  <!-- Setup -->
-  <div class="setup-banner" id="setup-section">
-    <h3>⚙ INSTELLING</h3>
-    <div class="setup-row">
-      <label>Google API key</label>
-      <input type="password" id="cfg-apikey" placeholder="AIza..." autocomplete="off" />
-    </div>
-    <div class="setup-row">
-      <label>Vertrekadres</label>
-      <input type="text" id="cfg-home" placeholder="Jouw thuisadres" />
-    </div>
-    <button class="setup-save" onclick="saveConfig()">Opslaan</button>
-  </div>
-
-  <!-- API setup instructions -->
-  <div class="instructions">
-    <button class="instr-toggle" onclick="toggleInstr(this)">
-      <span>HOE KOM IK AAN EEN GOOGLE API KEY?</span>
-      <span id="instr-arrow">▼</span>
-    </button>
-    <div class="instr-body" id="instr-body">
-      <div class="instr-step"><span class="instr-num">01</span><span>Ga naar <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> en maak een nieuw project aan.</span></div>
-      <div class="instr-step"><span class="instr-num">02</span><span>Ga naar "APIs & Services" → "Library" en activeer: <b>Routes API</b> en <b>Google Calendar API</b>.</span></div>
-      <div class="instr-step"><span class="instr-num">03</span><span>Ga naar "APIs & Services" → "Credentials" → "+ Create Credentials" → "API key".</span></div>
-      <div class="instr-step"><span class="instr-num">04</span><span>Kopieer de sleutel en plak hem hierboven. Je krijgt 10.000 gratis calls per maand — ruim genoeg voor persoonlijk gebruik.</span></div>
-      <div class="instr-step"><span class="instr-num">05</span><span>Voor Google Agenda: klik op "OAuth consent screen", kies "External", voeg jezelf toe als testgebruiker. Maak daarna een OAuth 2.0 Client ID aan en vul die hieronder in als je agenda-integratie wilt.</span></div>
-    </div>
-  </div>
 
   <!-- Stats -->
   <div class="stats">
@@ -596,15 +695,19 @@
       <div class="form-field" style="position:relative;">
         <span class="field-icon">◎</span>
         <span class="field-label">VAN</span>
-        <input type="text" id="f-van" placeholder="Vertrekpunt" autocomplete="off" oninput="onPlacesInput('van')" onkeydown="onAcKey(event,'van')" />
+        <input type="text" id="f-van" placeholder="Vertrekpunt" autocomplete="off" list="recent-addresses" onfocus="onPlacesFocus('van')" oninput="onPlacesInput('van')" onkeydown="onAcKey(event,'van')" />
         <div id="van-autocomplete" class="autocomplete-list" style="display:none;"></div>
+      </div>
+      <div class="swap-row">
+        <button class="btn-swap" type="button" onclick="swapAddresses()">⇅ wissel van / naar</button>
       </div>
       <div class="form-field" style="position:relative;">
         <span class="field-icon">◉</span>
         <span class="field-label">NAAR</span>
-        <input type="text" id="f-naar" placeholder="Bestemming" autocomplete="off" oninput="onPlacesInput('naar')" onkeydown="onAcKey(event,'naar')" />
+        <input type="text" id="f-naar" placeholder="Bestemming" autocomplete="off" list="recent-addresses" onfocus="onPlacesFocus('naar')" oninput="onPlacesInput('naar')" onkeydown="onAcKey(event,'naar')" />
         <div id="naar-autocomplete" class="autocomplete-list" style="display:none;"></div>
       </div>
+
       <div class="km-row">
         <div class="form-field">
           <span class="field-label">KM</span>
@@ -653,6 +756,32 @@
   </div>
 </div>
 
+<datalist id="recent-addresses"></datalist>
+
+
+<div class="bottom-actions">
+  <div class="bottom-actions-inner">
+    <button class="btn-settings" onclick="openSettingsModal()">Instellingen</button>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="settings-modal-overlay" id="settings-modal">
+  <div class="settings-modal">
+    <div class="modal-title">INSTELLINGEN</div>
+    <div class="modal-route">Adressen beheren</div>
+    <div class="settings-grid">
+      <div class="settings-field">
+        <label for="settings-home">Thuisadres</label>
+        <input type="text" id="settings-home" placeholder="Jouw thuisadres" />
+      </div>
+    </div>
+    <div class="settings-note">Je Google API key wordt nu vanuit de code geladen. Hier hoef je dus niets meer voor in te vullen.</div>
+    <button class="btn-confirm" onclick="saveAddressSettings()">Opslaan</button>
+    <button class="btn-cancel" onclick="closeSettingsModal()">Sluiten</button>
+  </div>
+</div>
+
 <!-- Navigation modal -->
 <div class="modal-overlay" id="nav-modal">
   <div class="modal">
@@ -671,44 +800,283 @@
 
 <script>
 // ─── State ────────────────────────────────────────────────────────
-let entries = JSON.parse(localStorage.getItem('km_entries_v2') || '[]');
+let entries = [];
+let localEntries = JSON.parse(localStorage.getItem('km_entries_v2') || '[]');
 let config = JSON.parse(localStorage.getItem('km_config') || '{}');
 let pendingRit = null;
 let distanceTimeout = null;
+let supabaseClient = null;
+let storageMode = 'local';
+
+// ─── CONFIG ─────────────────────────────────────────
+
+// Google
+const DEFAULT_API_KEY = 'AIzaSyAzDya29edoWWONaAXUZ4k5F3iPxyplGMY';
+
+// Supabase
+const SUPABASE_URL = 'https://aaivsqikzmkjrgfylvlp.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_Iz-YdOCytLqe3Fl092tZjA_P1NarPtm';
+
+// Init Supabase
+let recentAddresses = JSON.parse(localStorage.getItem('km_recent_addresses') || '[]');
 
 // ─── Init ─────────────────────────────────────────────────────────
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('f-datum').value = today;
 document.getElementById('header-date').textContent = new Date().toLocaleDateString('nl-NL', { weekday:'short', day:'numeric', month:'short' });
 
-if (config.apiKey) document.getElementById('cfg-apikey').value = config.apiKey;
-if (config.homeAddress) document.getElementById('cfg-home').value = config.homeAddress;
-
-// Pre-fill van with home address
-if (config.homeAddress) document.getElementById('f-van').value = config.homeAddress;
-
-// Hide setup if configured
-if (config.apiKey && config.homeAddress) {
-  document.getElementById('setup-section').style.display = 'none';
+const activeApiKey = config.apiKey || DEFAULT_API_KEY;
+if (activeApiKey) {
+  config.apiKey = activeApiKey;
 }
 
-render();
+const lastVan = localStorage.getItem('km_last_van') || '';
+const lastNaar = localStorage.getItem('km_last_naar') || '';
+
+if (lastVan) document.getElementById('f-van').value = lastVan;
+if (lastNaar) document.getElementById('f-naar').value = lastNaar;
+
+renderRecentAddresses();
+
+window.addEventListener('load', async () => {
+  try {
+    if (window.supabaseReady) {
+      await window.supabaseReady;
+    }
+  } catch (error) {
+    console.error('Supabase readiness failed:', error);
+  }
+  await initializeApp();
+});
+
+function hasSupabaseConfig() {
+  return Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY && window.supabase);
+}
+
+function setSyncStatus(text) {
+  const el = document.getElementById('sync-status');
+  if (el) el.textContent = text;
+}
+
+function initSupabase() {
+  if (!hasSupabaseConfig()) {
+    setSyncStatus('local');
+    return false;
+  }
+  if (!supabaseClient) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  }
+  storageMode = 'supabase';
+  setSyncStatus('cloud');
+  return true;
+}
+
+function normalizeEntry(entry = {}) {
+  return {
+    id: entry.id || null,
+    van: String(entry.van || '').trim(),
+    naar: String(entry.naar || '').trim(),
+    km: Number(entry.km || 0),
+    cat: entry.cat || 'werk',
+    datum: entry.datum || today,
+    created_at: entry.created_at || null,
+  };
+}
+
+function persistLocalEntries() {
+  localStorage.setItem('km_entries_v2', JSON.stringify(entries));
+}
+
+async function initializeApp() {
+  if (initSupabase()) {
+    try {
+      await loadEntriesFromSupabase();
+      await migrateLocalEntriesIfNeeded();
+      render();
+      return;
+    } catch (error) {
+      console.warn('Supabase fallback naar localStorage:', error);
+      storageMode = 'local';
+      setSyncStatus('local');
+    }
+  }
+
+  entries = (localEntries || []).map(normalizeEntry);
+  setSyncStatus('local');
+  render();
+}
+
+async function loadEntriesFromSupabase() {
+  const { data, error } = await supabaseClient
+    .from('ritten')
+    .select('id, van, naar, km, cat, datum, created_at')
+    .order('datum', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+
+  entries = (data || []).map(normalizeEntry);
+  localEntries = [...entries];
+  persistLocalEntries();
+}
+
+async function migrateLocalEntriesIfNeeded() {
+  if (!localEntries.length || entries.length) return;
+
+  const payload = localEntries.map((entry) => ({
+    van: entry.van || '',
+    naar: entry.naar || '',
+    km: Number(entry.km || 0),
+    cat: entry.cat || 'werk',
+    datum: entry.datum || today,
+  }));
+
+  const { error } = await supabaseClient.from('ritten').insert(payload);
+  if (error) {
+    console.warn('Lokale migratie naar Supabase mislukt:', error);
+    return;
+  }
+
+  await loadEntriesFromSupabase();
+}
+
+async function saveEntry(entry) {
+  const normalized = normalizeEntry(entry);
+
+  if (storageMode === 'supabase' && supabaseClient) {
+    const { error } = await supabaseClient.from('ritten').insert([{
+      van: normalized.van,
+      naar: normalized.naar,
+      km: normalized.km,
+      cat: normalized.cat,
+      datum: normalized.datum,
+    }]);
+
+    if (error) throw error;
+    await loadEntriesFromSupabase();
+    return;
+  }
+
+  entries.push(normalized);
+  persistLocalEntries();
+}
+
+async function removeEntry(entryKey) {
+  if (storageMode === 'supabase' && supabaseClient && entryKey) {
+    const { error } = await supabaseClient.from('ritten').delete().eq('id', entryKey);
+    if (error) throw error;
+    await loadEntriesFromSupabase();
+    return;
+  }
+
+  const idx = Number(String(entryKey).replace('local-', ''));
+  if (Number.isNaN(idx) || idx < 0) return;
+  entries.splice(idx, 1);
+  persistLocalEntries();
+}
+
+document.getElementById('settings-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'settings-modal') closeSettingsModal();
+});
+
+document.getElementById('nav-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'nav-modal') closeModal();
+});
 
 // ─── Config ───────────────────────────────────────────────────────
-function saveConfig() {
-  config.apiKey = document.getElementById('cfg-apikey').value.trim();
-  config.homeAddress = document.getElementById('cfg-home').value.trim();
+function openSettingsModal() {
+  document.getElementById('settings-home').value = config.homeAddress || '';
+  document.getElementById('settings-modal').classList.add('open');
+}
+
+function closeSettingsModal() {
+  document.getElementById('settings-modal').classList.remove('open');
+}
+
+function saveAddressSettings() {
+  config.apiKey = config.apiKey || DEFAULT_API_KEY;
+  config.homeAddress = document.getElementById('settings-home').value.trim();
   localStorage.setItem('km_config', JSON.stringify(config));
-  document.getElementById('f-van').value = config.homeAddress;
-  document.getElementById('setup-section').style.display = 'none';
+
+  closeSettingsModal();
   alert('Instellingen opgeslagen!');
 }
 
-function toggleInstr(btn) {
-  const body = document.getElementById('instr-body');
-  const arrow = document.getElementById('instr-arrow');
-  body.classList.toggle('open');
-  arrow.textContent = body.classList.contains('open') ? '▲' : '▼';
+function renderRecentAddresses() {
+  const list = document.getElementById('recent-addresses');
+  if (!list) return;
+  list.innerHTML = recentAddresses.map(address => `<option value="${escapeHtml(address)}"></option>`).join('');
+}
+
+function rememberAddress(address) {
+  const value = String(address || '').trim();
+  if (!value) return;
+  recentAddresses = [value, ...recentAddresses.filter(item => item.toLowerCase() !== value.toLowerCase())].slice(0, 8);
+  localStorage.setItem('km_recent_addresses', JSON.stringify(recentAddresses));
+  renderRecentAddresses();
+}
+
+function rememberLastAddresses(van, naar) {
+  localStorage.setItem('km_last_van', van || '');
+  localStorage.setItem('km_last_naar', naar || '');
+  rememberAddress(van);
+  rememberAddress(naar);
+}
+
+function normalizeAddress(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+
+function swapAddresses() {
+  const vanInput = document.getElementById('f-van');
+  const naarInput = document.getElementById('f-naar');
+  const temp = vanInput.value;
+  vanInput.value = naarInput.value;
+  naarInput.value = temp;
+  rememberLastAddresses(vanInput.value.trim(), naarInput.value.trim());
+  triggerDistanceCalc();
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+
+function getLocalSuggestions(query = '') {
+  const q = String(query || '').trim().toLowerCase();
+  const seen = new Set();
+  const suggestions = [];
+
+  const pushSuggestion = (full, main, secondary, isHome = false) => {
+    const value = String(full || '').trim();
+    if (!value) return;
+    const key = value.toLowerCase();
+    if (seen.has(key)) return;
+    if (q && !value.toLowerCase().includes(q)) return;
+    seen.add(key);
+    suggestions.push({ full: value, main, secondary, isHome });
+  };
+
+  if (config.homeAddress) {
+    pushSuggestion(config.homeAddress, 'Thuis', config.homeAddress, true);
+  }
+
+  recentAddresses.forEach(address => {
+    pushSuggestion(address, address, 'Recent adres');
+  });
+
+  return suggestions;
+}
+
+function onPlacesFocus(field) {
+  acSelected[field] = -1;
+  acResults[field] = getLocalSuggestions(document.getElementById(`f-${field}`).value);
+  renderAc(field);
 }
 
 // ─── Places Autocomplete ──────────────────────────────────────────
@@ -720,7 +1088,15 @@ let acTimers = { van: null, naar: null };
 function onPlacesInput(field) {
   const val = document.getElementById(`f-${field}`).value.trim();
   clearTimeout(acTimers[field]);
-  if (val.length < 2) { closeAc(field); return; }
+
+  if (val.length < 2) {
+    acSelected[field] = -1;
+    acResults[field] = getLocalSuggestions(val);
+    renderAc(field);
+    triggerDistanceCalc();
+    return;
+  }
+
   acTimers[field] = setTimeout(() => fetchPlaces(field, val), 350);
   triggerDistanceCalc();
 }
@@ -742,11 +1118,20 @@ async function fetchPlaces(field, input) {
     });
     const data = await res.json();
     const suggestions = data.suggestions || [];
-    acResults[field] = suggestions.map(s => ({
+    const remoteSuggestions = suggestions.map(s => ({
       main: s.placePrediction?.structuredFormat?.mainText?.text || s.placePrediction?.text?.text || '',
       secondary: s.placePrediction?.structuredFormat?.secondaryText?.text || '',
       full: s.placePrediction?.text?.text || ''
     })).filter(s => s.full);
+
+    const combined = [...getLocalSuggestions(input)];
+    remoteSuggestions.forEach(item => {
+      if (!combined.some(existing => normalizeAddress(existing.full) === normalizeAddress(item.full))) {
+        combined.push(item);
+      }
+    });
+
+    acResults[field] = combined;
     acSelected[field] = -1;
     renderAc(field);
   } catch(e) { closeAc(field); }
@@ -754,13 +1139,18 @@ async function fetchPlaces(field, input) {
 
 function renderAc(field) {
   const container = document.getElementById(`${field}-autocomplete`);
-  if (!acResults[field].length) { container.style.display = 'none'; return; }
-  container.innerHTML = acResults[field].map((s, i) => `
+  const items = acResults[field] || [];
+  if (!items.length) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.innerHTML = items.map((s, i) => `
     <div class="autocomplete-item${acSelected[field]===i?' selected':''}" onmousedown="selectAc('${field}',${i})">
-      <div class="autocomplete-icon">◉</div>
+      <div class="autocomplete-icon">${s.isHome ? '🏠' : '◉'}</div>
       <div>
-        <div class="autocomplete-main">${s.main}</div>
-        <div class="autocomplete-secondary">${s.secondary}</div>
+        <div class="autocomplete-main">${escapeHtml(s.main || s.full)}</div>
+        <div class="autocomplete-secondary">${escapeHtml(s.secondary || '')}</div>
       </div>
     </div>
   `).join('');
@@ -866,6 +1256,7 @@ function handleToevoegen() {
   if (!datum) { alert('Vul een datum in.'); return; }
   if (!km || km <= 0) { alert('Vul een afstand in (of wacht op automatische berekening).'); return; }
 
+  rememberLastAddresses(van, naar);
   pendingRit = { van, naar, km, cat, datum };
 
   // Show modal
@@ -888,13 +1279,17 @@ function openAppleMaps() {
   window.open(`https://maps.apple.com/?daddr=${dest}${origin}&dirflg=d`, '_blank');
 }
 
-function confirmRit() {
+async function confirmRit() {
   if (!pendingRit) return;
-  entries.push(pendingRit);
-  save();
-  render();
-  closeModal();
-  resetForm();
+  try {
+    await saveEntry(pendingRit);
+    render();
+    closeModal();
+    resetForm();
+  } catch (error) {
+    console.error(error);
+    alert('Opslaan mislukt. Controleer je Supabase instellingen of internetverbinding.');
+  }
 }
 
 function closeModal() {
@@ -903,20 +1298,23 @@ function closeModal() {
 }
 
 function resetForm() {
-  document.getElementById('f-van').value = config.homeAddress || '';
-  document.getElementById('f-naar').value = '';
+  document.getElementById('f-van').value = localStorage.getItem('km_last_van') || '';
+  document.getElementById('f-naar').value = localStorage.getItem('km_last_naar') || '';
   document.getElementById('f-km').value = '';
   document.getElementById('f-datum').value = today;
   document.getElementById('dist-badge').textContent = '';
 }
 
 // ─── Data ─────────────────────────────────────────────────────────
-function save() { localStorage.setItem('km_entries_v2', JSON.stringify(entries)); }
-
-function deleteEntry(idx) {
+async function deleteEntry(entryKey) {
   if (!confirm('Rit verwijderen?')) return;
-  entries.splice(idx, 1);
-  save(); render();
+  try {
+    await removeEntry(entryKey);
+    render();
+  } catch (error) {
+    console.error(error);
+    alert('Verwijderen mislukt.');
+  }
 }
 
 // ─── Render ───────────────────────────────────────────────────────
@@ -933,7 +1331,7 @@ function render() {
 function renderRitten() {
   const list = document.getElementById('entries-list');
   if (!entries.length) { list.innerHTML = '<div class="empty">// geen ritten geregistreerd</div>'; return; }
-  const sorted = [...entries].map((e,i) => ({...e, _i:i})).sort((a,b) => b.datum.localeCompare(a.datum));
+  const sorted = [...entries].map((e,i) => ({...e, _key: e.id || `local-${i}`})).sort((a,b) => b.datum.localeCompare(a.datum));
   list.innerHTML = sorted.map(e => {
     const d = new Date(e.datum + 'T12:00:00');
     const dateStr = d.toLocaleDateString('nl-NL', { day:'2-digit', month:'short' });
@@ -948,7 +1346,7 @@ function renderRitten() {
       </div>
       <div class="entry-right">
         <div class="entry-km">${e.km.toFixed(1)}<span>km</span></div>
-        <button class="btn-del" onclick="deleteEntry(${e._i})">×</button>
+        <button class="btn-del" onclick="deleteEntry(\'${e._key}\')">×</button>
       </div>
     </div>`;
   }).join('');
