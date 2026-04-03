@@ -7,7 +7,7 @@
 <link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-<style>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=Mp7Ir2j9ytK8aDy0jF6oL6-EcqOaS1DH7lHEo-FsKIetn9nbRE-OUGuJ9ET3xIupDF_CNKjERHXvws8XHb4VC5aZn4yUIezf9TuDwJozNFuVWFKHpajP0IF-yED6XjN_hIQvh-ucZFRawbDAJuOZhk6vUQhh5HeSvXPKTy2NCxe9aFrUcKzFiaCcBsC0DlBGDrHMpZC7Va3nkqIn_K1t4RAvqr8WofR4YjzmxjEDxQ01Sm0DzHfIG483ToHW9gxqjIFcXgSmipity4Z2nKsmVw" charset="UTF-8"></script><style>
   :root {
     --bg: #050505;
     --surface: #111111;
@@ -809,6 +809,10 @@
 let entries = [];
 let localEntries = JSON.parse(localStorage.getItem('km_entries_v2') || '[]');
 let config = JSON.parse(localStorage.getItem('km_config') || '{}');
+if (!config.thuisadres) {
+  config.thuisadres = 'Tolentijnstraat 10A, 5469 NE Erp';
+  localStorage.setItem('km_config', JSON.stringify(config));
+}
 let pendingRit = null;
 let distanceTimeout = null;
 let supabaseClient = null;
