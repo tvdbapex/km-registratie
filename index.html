@@ -356,6 +356,12 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+  }
+  .entry-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
   }
   .entry-left { flex: 1; min-width: 0; }
   .entry-route {
@@ -974,6 +980,33 @@ async function removeEntry(entryKey) {
   persistLocalEntries();
 }
 
+async function updateEntry(entryKey, updatedEntry) {
+  const normalized = normalizeEntry(updatedEntry);
+
+  if (storageMode === 'supabase' && supabaseClient && entryKey && !String(entryKey).startsWith('local-')) {
+    const { error } = await supabaseClient
+      .from('ritten')
+      .update({
+        van: normalized.van,
+        naar: normalized.naar,
+        km: normalized.km,
+        cat: normalized.cat,
+        datum: normalized.datum,
+      })
+      .eq('id', entryKey);
+
+    if (error) throw error;
+    await loadEntriesFromSupabase();
+    return;
+  }
+
+  const idx = Number(String(entryKey).replace('local-', ''));
+  if (Number.isNaN(idx) || idx < 0 || idx >= entries.length) return;
+  entries[idx] = { ...entries[idx], ...normalized };
+  persistLocalEntries();
+}
+
+
 document.getElementById('settings-modal').addEventListener('click', (e) => {
   if (e.target.id === 'settings-modal') closeSettingsModal();
 });
@@ -1408,6 +1441,60 @@ function switchTab(name, el) {
   el.classList.add('active');
 }
 
+
+function getEntryByKey(entryKey) {
+  if (String(entryKey).startsWith('local-')) {
+    const idx = Number(String(entryKey).replace('local-', ''));
+    return Number.isNaN(idx) ? null : entries[idx] || null;
+  }
+  return entries.find(e => String(e.id) === String(entryKey)) || null;
+}
+
+function openEntryModal(entryKey) {
+  const entry = getEntryByKey(entryKey);
+  if (!entry) return;
+
+  editingEntryKey = entryKey;
+  document.getElementById('entry-modal-title').textContent = `${entry.van} → ${entry.naar}`;
+  document.getElementById('edit-van').value = entry.van || '';
+  document.getElementById('edit-naar').value = entry.naar || '';
+  document.getElementById('edit-km').value = entry.km || '';
+  document.getElementById('edit-cat').value = entry.cat || 'werk';
+  document.getElementById('edit-datum').value = entry.datum || '';
+  document.getElementById('entry-modal').classList.add('open');
+}
+
+function closeEntryModal() {
+  document.getElementById('entry-modal').classList.remove('open');
+  editingEntryKey = null;
+}
+
+async function saveEntryEdit() {
+  if (!editingEntryKey) return;
+
+  const updatedEntry = {
+    van: document.getElementById('edit-van').value.trim(),
+    naar: document.getElementById('edit-naar').value.trim(),
+    km: parseFloat(document.getElementById('edit-km').value),
+    cat: document.getElementById('edit-cat').value,
+    datum: document.getElementById('edit-datum').value
+  };
+
+  if (!updatedEntry.van || !updatedEntry.naar || !updatedEntry.datum || !updatedEntry.km || updatedEntry.km <= 0) {
+    alert('Vul van, naar, datum en een geldige afstand in.');
+    return;
+  }
+
+  try {
+    await updateEntry(editingEntryKey, updatedEntry);
+    render();
+    closeEntryModal();
+  } catch (error) {
+    console.error(error);
+    alert('Aanpassen mislukt.');
+  }
+}
+
 // ─── Export ───────────────────────────────────────────────────────
 function exportCSV() {
   if (!entries.length) { alert('Geen ritten om te exporteren.'); return; }
@@ -1448,5 +1535,43 @@ function exportExcel() {
   a.download = 'km-registratie.xls'; a.click();
 }
 </script>
+
+<!-- Entry edit modal -->
+<div class="settings-modal-overlay" id="entry-modal">
+  <div class="settings-modal">
+    <div class="modal-title">RIT DETAILS</div>
+    <div class="modal-route" id="entry-modal-title">Route bewerken</div>
+    <div class="settings-grid">
+      <div class="settings-field">
+        <label for="edit-van">Van</label>
+        <input type="text" id="edit-van" placeholder="Vertrekpunt" />
+      </div>
+      <div class="settings-field">
+        <label for="edit-naar">Naar</label>
+        <input type="text" id="edit-naar" placeholder="Bestemming" />
+      </div>
+      <div class="settings-field">
+        <label for="edit-km">KM</label>
+        <input type="number" id="edit-km" min="0" step="0.1" placeholder="Aantal km" />
+      </div>
+      <div class="settings-field">
+        <label for="edit-cat">Categorie</label>
+        <select id="edit-cat" style="width:100%;background: var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'DM Sans', sans-serif;font-size:14px;padding:12px 14px;outline:none;">
+          <option value="werk">Werk</option>
+          <option value="prive">Privé</option>
+          <option value="anders">Anders</option>
+        </select>
+      </div>
+      <div class="settings-field">
+        <label for="edit-datum">Datum</label>
+        <input type="date" id="edit-datum" />
+      </div>
+    </div>
+    <div class="settings-note">Hier kun je de volledige route bekijken en fouten corrigeren.</div>
+    <button class="btn-confirm" onclick="saveEntryEdit()">Opslaan</button>
+    <button class="btn-cancel" onclick="closeEntryModal()">Sluiten</button>
+  </div>
+</div>
+
 </body>
 </html>
