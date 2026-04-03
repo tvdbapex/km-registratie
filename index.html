@@ -1381,7 +1381,7 @@ function renderRitten() {
     const d = new Date(e.datum + 'T12:00:00');
     const dateStr = d.toLocaleDateString('nl-NL', { day:'2-digit', month:'short' });
     const catLabel = e.cat === 'werk' ? 'WERK' : e.cat === 'prive' ? 'PRIVÉ' : 'ANDERS';
-    return `<div class="entry-card">
+    return `<div class="entry-card" onclick="openEntryModal(\'${e._key}\')" title="${e.van} → ${e.naar}">
       <div class="entry-left">
         <div class="entry-route">${e.van || '—'} → ${e.naar || '—'}</div>
         <div class="entry-meta">
