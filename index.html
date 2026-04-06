@@ -7,7 +7,7 @@
 <link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=UljaDtiv3xEOwyCKBlRQhNkYtej0FU13NTa3q8KYZnGB-uNJ6XHwk_3drIHsqXwNcZBEg4cuJFi9FOtVtNi0r0bwH0SAU0eT5y-j5A_-xWh-w1m78YQVv9mWJlHrmGIgHBzstA5v-OMGhq_Oe3axgQuHZJlvGbJI4fHSZ0ofXqP5VkzQdaU_dlhX81RjZtr89YQDXffSBvzBOTjiUmnGu2ZOVSbKinRByjObBoP2j8R5s1v1sivDDJ4BSXuVhMHmeuFsmx-zk3wbfEG2wofYmQ" charset="UTF-8"></script><style>
+<style>
   :root {
     --bg: #050505;
     --surface: #111111;
@@ -710,7 +710,7 @@
   <!-- Header -->
   <div class="header">
     <div class="header-title">KM // LOG</div>
-    <div style="display:flex; align-items:center; gap:8px;"><div class="header-date" id="header-date"></div><div class="header-date" id="sync-status">sync…</div></div>
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;"><div class="header-date" id="header-date"></div><div class="header-date" id="sync-status">sync…</div><div class="header-date" id="user-badge" style="display:none;">ingelogd</div></div>
   </div>
 
 
@@ -894,6 +894,18 @@ function setAuthMessage(message) {
   if (el) el.textContent = message;
 }
 
+function setUserBadge(user) {
+  const badge = document.getElementById('user-badge');
+  if (!badge) return;
+  if (!user?.email) {
+    badge.style.display = 'none';
+    badge.textContent = '';
+    return;
+  }
+  badge.style.display = 'inline-block';
+  badge.textContent = `ingelogd als ${user.email}`;
+}
+
 function showAppShell(isLoggedIn) {
   const authScreen = document.getElementById('auth-screen');
   const appShell = document.getElementById('app-shell');
@@ -922,21 +934,26 @@ async function bootstrapAuth() {
 
   currentUser = data?.session?.user || null;
   showAppShell(Boolean(currentUser));
+  setUserBadge(currentUser);
 
   supabaseClient.auth.onAuthStateChange(async (_event, session) => {
     currentUser = session?.user || null;
     showAppShell(Boolean(currentUser));
+    setUserBadge(currentUser);
     if (currentUser) {
+      setAuthMessage(`Ingelogd als ${currentUser.email}`);
       await initializeApp();
     } else {
       entries = [];
       render();
       setSyncStatus('login');
+      setUserBadge(null);
       setAuthMessage('Log in om ritten te bekijken en te bewerken.');
     }
   });
 
   if (currentUser) {
+    setAuthMessage(`Sessie actief voor ${currentUser.email}`);
     await initializeApp();
   } else {
     setSyncStatus('login');
@@ -962,12 +979,15 @@ async function handleLogin() {
     return;
   }
 
-  setAuthMessage('Ingelogd.');
+  setAuthMessage('Ingelogd. Je sessie blijft bewaard op dit apparaat totdat je uitlogt.');
 }
 
 async function handleLogout() {
   if (!supabaseClient) return;
   await supabaseClient.auth.signOut();
+  document.getElementById('login-password').value = '';
+  setAuthMessage('Uitgelogd. Log opnieuw in om verder te gaan.');
+  setUserBadge(null);
 }
 
 function hasSupabaseConfig() {
