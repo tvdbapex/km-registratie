@@ -7,7 +7,7 @@
 <link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-<style>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=UljaDtiv3xEOwyCKBlRQhNkYtej0FU13NTa3q8KYZnGB-uNJ6XHwk_3drIHsqXwNcZBEg4cuJFi9FOtVtNi0r0bwH0SAU0eT5y-j5A_-xWh-w1m78YQVv9mWJlHrmGIgHBzstA5v-OMGhq_Oe3axgQuHZJlvGbJI4fHSZ0ofXqP5VkzQdaU_dlhX81RjZtr89YQDXffSBvzBOTjiUmnGu2ZOVSbKinRByjObBoP2j8R5s1v1sivDDJ4BSXuVhMHmeuFsmx-zk3wbfEG2wofYmQ" charset="UTF-8"></script><style>
   :root {
     --bg: #050505;
     --surface: #111111;
@@ -663,6 +663,12 @@
     letter-spacing: 0.04em;
   }
 
+
+  #auth-screen + .app #bottom-actions,
+  #auth-screen + .app .bottom-actions {
+    display: none;
+  }
+
 </style>
 <script type="module">
   window.supabaseReady = import("https://esm.sh/@supabase/supabase-js@2")
@@ -891,6 +897,8 @@ function setAuthMessage(message) {
 function showAppShell(isLoggedIn) {
   const authScreen = document.getElementById('auth-screen');
   const appShell = document.getElementById('app-shell');
+  const bottom = document.querySelector('.bottom-actions');
+  if (bottom) bottom.style.display = isLoggedIn ? 'block' : 'none';
   if (authScreen) authScreen.style.display = isLoggedIn ? 'none' : 'block';
   if (appShell) appShell.style.display = isLoggedIn ? 'block' : 'none';
 }
