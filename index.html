@@ -678,7 +678,28 @@
 </script>
 </head>
 <body>
-<div class="app">
+<div id="auth-screen" style="display:none; min-height:100vh; padding:24px 20px; max-width:480px; margin:0 auto;">
+  <div class="header" style="position:static; padding-left:0; padding-right:0;">
+    <div class="header-title">KM // LOGIN</div>
+    <div class="header-date">beveiligde toegang</div>
+  </div>
+  <div class="form-section" style="padding-left:0; padding-right:0; padding-top:20px;">
+    <div class="section-label">Inloggen</div>
+    <div class="form-card">
+      <div class="form-field">
+        <span class="field-label">EMAIL</span>
+        <input type="email" id="login-email" placeholder="jij@voorbeeld.nl" autocomplete="username" />
+      </div>
+      <div class="form-field">
+        <span class="field-label">WACHTW</span>
+        <input type="password" id="login-password" placeholder="Wachtwoord" autocomplete="current-password" />
+      </div>
+    </div>
+    <button class="btn-primary" onclick="handleLogin()">Inloggen</button>
+    <div class="settings-note" id="auth-message" style="margin-top:12px;">Alleen ingelogde gebruikers hebben toegang tot ritten.</div>
+  </div>
+</div>
+<div class="app" id="app-shell" style="display:none;">
 
   <!-- Header -->
   <div class="header">
@@ -766,8 +787,9 @@
 
 
 <div class="bottom-actions">
-  <div class="bottom-actions-inner">
+  <div class="bottom-actions-inner" style="gap:8px;">
     <button class="btn-settings" onclick="openSettingsModal()">Instellingen</button>
+    <button class="btn-settings" onclick="handleLogout()">Uitloggen</button>
   </div>
 </div>
 
@@ -809,14 +831,15 @@
 let entries = [];
 let localEntries = JSON.parse(localStorage.getItem('km_entries_v2') || '[]');
 let config = JSON.parse(localStorage.getItem('km_config') || '{}');
-if (!config.thuisadres) {
-  config.thuisadres = 'Tolentijnstraat 10A, 5469 NE Erp';
+if (!config.homeAddress) {
+  config.homeAddress = 'Tolentijnstraat 10A, 5469 NE Erp';
   localStorage.setItem('km_config', JSON.stringify(config));
 }
 let pendingRit = null;
 let distanceTimeout = null;
 let supabaseClient = null;
 let storageMode = 'local';
+let currentUser = null;
 
 // ─── CONFIG ─────────────────────────────────────────
 
@@ -856,8 +879,88 @@ window.addEventListener('load', async () => {
   } catch (error) {
     console.error('Supabase readiness failed:', error);
   }
-  await initializeApp();
+  await bootstrapAuth();
 });
+
+
+function setAuthMessage(message) {
+  const el = document.getElementById('auth-message');
+  if (el) el.textContent = message;
+}
+
+function showAppShell(isLoggedIn) {
+  const authScreen = document.getElementById('auth-screen');
+  const appShell = document.getElementById('app-shell');
+  if (authScreen) authScreen.style.display = isLoggedIn ? 'none' : 'block';
+  if (appShell) appShell.style.display = isLoggedIn ? 'block' : 'none';
+}
+
+async function bootstrapAuth() {
+  if (!hasSupabaseConfig()) {
+    showAppShell(false);
+    setAuthMessage('Supabase configuratie ontbreekt.');
+    return;
+  }
+
+  initSupabase();
+
+  const { data, error } = await supabaseClient.auth.getSession();
+  if (error) {
+    console.error(error);
+    showAppShell(false);
+    setAuthMessage('Sessie ophalen mislukt.');
+    return;
+  }
+
+  currentUser = data?.session?.user || null;
+  showAppShell(Boolean(currentUser));
+
+  supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+    currentUser = session?.user || null;
+    showAppShell(Boolean(currentUser));
+    if (currentUser) {
+      await initializeApp();
+    } else {
+      entries = [];
+      render();
+      setSyncStatus('login');
+      setAuthMessage('Log in om ritten te bekijken en te bewerken.');
+    }
+  });
+
+  if (currentUser) {
+    await initializeApp();
+  } else {
+    setSyncStatus('login');
+    setAuthMessage('Log in om ritten te bekijken en te bewerken.');
+  }
+}
+
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  if (!email || !password) {
+    setAuthMessage('Vul e-mail en wachtwoord in.');
+    return;
+  }
+
+  setAuthMessage('Bezig met inloggen...');
+
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    console.error(error);
+    setAuthMessage('Inloggen mislukt. Controleer je gegevens.');
+    return;
+  }
+
+  setAuthMessage('Ingelogd.');
+}
+
+async function handleLogout() {
+  if (!supabaseClient) return;
+  await supabaseClient.auth.signOut();
+}
 
 function hasSupabaseConfig() {
   return Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY && window.supabase);
@@ -898,6 +1001,13 @@ function persistLocalEntries() {
 }
 
 async function initializeApp() {
+  if (!currentUser) {
+    entries = [];
+    setSyncStatus('login');
+    render();
+    return;
+  }
+
   if (initSupabase()) {
     try {
       await loadEntriesFromSupabase();
@@ -1021,7 +1131,7 @@ document.getElementById('nav-modal').addEventListener('click', (e) => {
 
 // ─── Config ───────────────────────────────────────────────────────
 function openSettingsModal() {
-  document.getElementById('settings-home').value = config.homeAddress || '';
+  document.getElementById('settings-home').value = config.homeAddress || 'Tolentijnstraat 10A, 5469 NE Erp';
   document.getElementById('settings-modal').classList.add('open');
 }
 
