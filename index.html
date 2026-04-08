@@ -822,7 +822,8 @@
     <div class="modal-title">RIT BEVESTIGEN</div>
     <div class="modal-route" id="modal-route">— → —</div>
     <div class="modal-km" id="modal-km">— <span>km</span></div>
-    <button class="btn-confirm" id="btn-confirm-rit" onclick="confirmRit()">✓ Rit bevestigen & loggen</button>
+    <button class="btn-confirm" id="btn-confirm-rit" type="button" onclick="confirmRit()">✓ Rit bevestigen & loggen</button>
+    <div class="settings-note" id="confirm-status" style="margin-top:10px; display:none;"></div>
     <div class="modal-nav-label">OPEN NAVIGATIE (OPTIONEEL)</div>
     <div class="nav-buttons">
       <button class="btn-nav btn-google" onclick="openGoogleMaps()">Google Maps</button>
@@ -1134,16 +1135,17 @@ async function saveEntry(entry) {
     if (error) {
       if (isInvalidRefreshTokenError(error)) {
         await forceRelogin('Je sessie is verlopen tijdens opslaan. Log opnieuw in.');
-        return;
+        return false;
       }
       throw error;
     }
     await loadEntriesFromSupabase();
-    return;
+    return true;
   }
 
   entries.push(normalized);
   persistLocalEntries();
+  return true;
 }
 
 async function removeEntry(entryKey) {
@@ -1486,6 +1488,19 @@ function handleToevoegen() {
   // Show modal
   document.getElementById('modal-route').textContent = `${van || '—'} → ${naar}`;
   document.getElementById('modal-km').innerHTML = `${km.toFixed(1)} <span>km</span>`;
+
+  const btn = document.getElementById('btn-confirm-rit');
+  if (btn) {
+    btn.textContent = '✓ Rit bevestigen & loggen';
+    btn.disabled = false;
+  }
+
+  const status = document.getElementById('confirm-status');
+  if (status) {
+    status.style.display = 'none';
+    status.textContent = '';
+  }
+
   document.getElementById('nav-modal').classList.add('open');
 }
 
@@ -1507,10 +1522,28 @@ async function confirmRit() {
   if (!pendingRit) return;
 
   const btn = document.getElementById('btn-confirm-rit');
+  const status = document.getElementById('confirm-status');
   if (btn?.disabled) return;
 
   try {
-    await saveEntry(pendingRit);
+    if (btn) {
+      btn.textContent = 'Bezig met opslaan...';
+      btn.disabled = true;
+    }
+    if (status) {
+      status.style.display = 'none';
+      status.textContent = '';
+    }
+
+    const saved = await saveEntry(pendingRit);
+    if (!saved) {
+      if (btn) {
+        btn.textContent = '✓ Rit bevestigen & loggen';
+        btn.disabled = false;
+      }
+      return;
+    }
+
     render();
     resetForm();
 
@@ -1518,8 +1551,20 @@ async function confirmRit() {
       btn.textContent = '✓ Opgeslagen';
       btn.disabled = true;
     }
+    if (status) {
+      status.style.display = 'block';
+      status.textContent = 'Rit opgeslagen. Je kunt nu optioneel navigatie openen of de popup sluiten.';
+    }
   } catch (error) {
     console.error(error);
+    if (btn) {
+      btn.textContent = '✓ Rit bevestigen & loggen';
+      btn.disabled = false;
+    }
+    if (status) {
+      status.style.display = 'block';
+      status.textContent = 'Opslaan mislukt. Probeer opnieuw.';
+    }
     alert('Opslaan mislukt. Controleer je Supabase instellingen of internetverbinding.');
   }
 }
@@ -1530,6 +1575,11 @@ function closeModal() {
   if (btn) {
     btn.textContent = '✓ Rit bevestigen & loggen';
     btn.disabled = false;
+  }
+  const status = document.getElementById('confirm-status');
+  if (status) {
+    status.style.display = 'none';
+    status.textContent = '';
   }
   pendingRit = null;
 }
