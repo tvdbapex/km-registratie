@@ -1512,10 +1512,13 @@ function openGoogleMaps() {
 }
 
 function openAppleMaps() {
-  const { van, naar } = pendingRit;
-  const dest = encodeURIComponent(naar);
-  const origin = van ? `&saddr=${encodeURIComponent(van)}` : '';
-  window.open(`https://maps.apple.com/?daddr=${dest}${origin}&dirflg=d`, '_blank');
+  if (!pendingRit?.naar) return;
+
+  const dest = encodeURIComponent(pendingRit.naar);
+
+  // Laat Apple Maps de huidige locatie gebruiken als vertrekpunt.
+  // Dan krijg je op iPhone de echte 'Ga' auto-navigatie in plaats van alleen 'Stappen'.
+  window.location.href = `https://maps.apple.com/?daddr=${dest}&dirflg=d`;
 }
 
 async function confirmRit() {
