@@ -894,6 +894,33 @@ function setAuthMessage(message) {
   if (el) el.textContent = message;
 }
 
+function isInvalidRefreshTokenError(error) {
+  const msg = String(error?.message || error?.error_description || error || '').toLowerCase();
+  return msg.includes('invalid refresh token') || msg.includes('refresh token not found');
+}
+
+async function forceRelogin(reason = 'Je sessie is verlopen. Log opnieuw in om verder te gaan.') {
+  try {
+    if (supabaseClient) {
+      await supabaseClient.auth.signOut({ scope: 'local' });
+    }
+  } catch (e) {
+    console.warn('Local signout fallback', e);
+  }
+
+  currentUser = null;
+  entries = [];
+  storageMode = 'local';
+  setUserBadge(null);
+  setSyncStatus('login');
+  render();
+  showAppShell(false);
+  setAuthMessage(reason);
+
+  const pw = document.getElementById('login-password');
+  if (pw) pw.value = '';
+}
+
 function setUserBadge(user) {
   const badge = document.getElementById('user-badge');
   if (!badge) return;
@@ -1043,6 +1070,11 @@ async function initializeApp() {
       render();
       return;
     } catch (error) {
+      if (isInvalidRefreshTokenError(error)) {
+        console.warn('Supabase sessie verlopen:', error);
+        await forceRelogin('Je sessie is verlopen of ongeldig geworden. Log opnieuw in.');
+        return;
+      }
       console.warn('Supabase fallback naar localStorage:', error);
       storageMode = 'local';
       setSyncStatus('local');
@@ -1099,7 +1131,13 @@ async function saveEntry(entry) {
       datum: normalized.datum,
     }]);
 
-    if (error) throw error;
+    if (error) {
+      if (isInvalidRefreshTokenError(error)) {
+        await forceRelogin('Je sessie is verlopen tijdens opslaan. Log opnieuw in.');
+        return;
+      }
+      throw error;
+    }
     await loadEntriesFromSupabase();
     return;
   }
@@ -1111,7 +1149,13 @@ async function saveEntry(entry) {
 async function removeEntry(entryKey) {
   if (storageMode === 'supabase' && supabaseClient && entryKey) {
     const { error } = await supabaseClient.from('ritten').delete().eq('id', entryKey);
-    if (error) throw error;
+    if (error) {
+      if (isInvalidRefreshTokenError(error)) {
+        await forceRelogin('Je sessie is verlopen tijdens verwijderen. Log opnieuw in.');
+        return;
+      }
+      throw error;
+    }
     await loadEntriesFromSupabase();
     return;
   }
@@ -1137,7 +1181,13 @@ async function updateEntry(entryKey, updatedEntry) {
       })
       .eq('id', entryKey);
 
-    if (error) throw error;
+    if (error) {
+      if (isInvalidRefreshTokenError(error)) {
+        await forceRelogin('Je sessie is verlopen tijdens aanpassen. Log opnieuw in.');
+        return;
+      }
+      throw error;
+    }
     await loadEntriesFromSupabase();
     return;
   }
